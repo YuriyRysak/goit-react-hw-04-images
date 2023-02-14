@@ -86,11 +86,10 @@ import {Modal} from './Modal/Modal.jsx';
       return (
         <div>
           <Searchbar onSubmit={this.onFormSubmit}/>
-          {isLoading ? (
-          <Loader />
-        ) : (
+          {isLoading && <Loader />}
+        
           <ImageGallery images={images} openModal={this.imageModal} />
-        )}
+        
 
         {loadMore && <Button onloadMore={this.onloadMore} page={page} />}
 
