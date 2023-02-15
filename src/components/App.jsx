@@ -5,6 +5,7 @@ import {Loader} from './Loader/Loader';
 import {ImageGallery} from './ImageGallery/ImageGallery';
 import {Button} from './Button/Button';
 import {Modal} from './Modal/Modal.jsx';
+import {animateScroll} from 'react-scroll'
 
 
 
@@ -66,6 +67,14 @@ import {Modal} from './Modal/Modal.jsx';
     onloadMore = () => {
       this.setState(prevState => ({ page: prevState.page + 1 }));
       this.scrollOnMoreButton();
+    };
+
+    scrollOnMoreButton = () => {
+      animateScroll.scrollToBottom({
+        duration: 1000,
+        delay: 10,
+        smooth: 'linear',
+      });
     };
     
     imageModal = (largeImageURL) => {
