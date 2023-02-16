@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect} from 'react';
 import {ImagesService} from './services/api';
 import {Searchbar} from './Searchbar/Searchbar';
 import {Loader} from './Loader/Loader';
@@ -9,67 +9,58 @@ import {animateScroll} from 'react-scroll'
 
 
 
- export class App extends Component {
+ export const App =() => {
+
+  const [searchImg, setSearchImg] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loadMore, setLoadMore] = useState(false);
+  const [largeImageURL, setLargeImageURL] = useState('largeImageURL');
+  const [id, setId] = useState(null);
+  const per_page = 12;
  
+  useEffect(() => {
+    getImages(searchImg, page);
+  }, [searchImg, page]);
 
-  state = {
-    searchImg: '',
-    images: [],
-    page: 1,
-    per_page: 12,    
-    isLoading: false,
-    error: null,
-    showModal: false,
-    loadMore: false,
-    largeImageURL: 'largeImageURL',
-    id: null,
-  };
-
-  
-   componentDidUpdate(_, prevState) {
-    // console.log(prevState.page);
-    // console.log(this.state.page);
-    const { searchImg, page } = this.state;
-    if (prevState.searchImg !== searchImg || prevState.page !== page) {
-      this.getImages(searchImg, page);
-    }
-  }
-    getImages = async (query, page) => {
-      this.setState({ isLoading: true });
-      if (!query) {
+ 
+    const getImages = async (searchImg, page) => {
+      if (!searchImg) {
         return;
       }
+      setIsLoading(true);
 
       try {
-        const { hits, totalHits } = await ImagesService(query, page);
-        // console.log(hits, totalHits);
-        this.setState(prevState => ({
-          images: [...prevState.images, ...hits],
-          loadMore: this.state.page < Math.ceil(totalHits / this.state.per_page),
-        }));
+        const { hits, totalHits } = await ImagesService(searchImg, page);
+         if (hits.length === 0) {
+          return alert('Enter a search query (');
+         }
+          setImages(prevImages => [...prevImages, ...hits]);
+          setLoadMore(page < Math.ceil(totalHits / per_page));
+        
       } catch (error) {
-        this.setState({ error });
+        setError({ error });
       } finally {
-        this.setState({ isLoading: false });
+        setIsLoading(false);
       }
-    }
-    onFormSubmit = searchImg => {
-      // console.log(searchImg)
-      this.setState ({
-        searchImg,
-        images: [],
-        page: 1,
-        loadMore: false,
-      });
-      // console.log(query)
-     };
-
-    onloadMore = () => {
-      this.setState(prevState => ({ page: prevState.page + 1 }));
-      this.scrollOnMoreButton();
+    };
+    const onFormSubmit = searchImg => {
+        setSearchImg(searchImg);
+        setImages([]);
+        setPage(1);
+        setLoadMore(false);
     };
 
-    scrollOnMoreButton = () => {
+   const onloadMore = () => {
+      setIsLoading(true);
+      setPage(prevPage =>  prevPage + 1);
+      scrollOnMoreButton();
+    };
+
+    const scrollOnMoreButton = () => {
       animateScroll.scrollToBottom({
         duration: 1000,
         delay: 10,
@@ -77,39 +68,37 @@ import {animateScroll} from 'react-scroll'
       });
     };
     
-    imageModal = (largeImageURL) => {
-      this.setState(({ showModal, }) => ({
-        showModal: !showModal,
-        largeImageURL: largeImageURL,
-      }));
+    const imageModalOpen = largeImageURL => {
+          setShowModal(true);
+          setLargeImageURL(largeImageURL);
+        
     }; 
-    closeModal = () => {
-      this.setState({
-        showModal: false,
-      });
+    const closeModal = () => {
+         setShowModal(false);
+      
     };
   
-    render() {
-      const { images, isLoading, loadMore, showModal, page, largeImageURL } = this.state;
+   
+      // const { images, isLoading, loadMore, showModal, page, largeImageURL } = this.state;
         
       return (
         <div>
-          <Searchbar onSubmit={this.onFormSubmit}/>
+          <Searchbar onSubmit={onFormSubmit}/>
           {isLoading && <Loader />}
         
-          <ImageGallery images={images} openModal={this.imageModal} />
+          <ImageGallery images={images} openModal={imageModalOpen} />
         
 
-        {loadMore && <Button onloadMore={this.onloadMore} page={page} />}
+        {loadMore && <Button onloadMore={onloadMore} page={page} />}
 
          {showModal && (
-          <Modal largeImageURL={largeImageURL} onClose={this.closeModal} />
+          <Modal largeImageURL={largeImageURL} onClose={closeModal} />
         )} 
           
-          {/* {error && <p>Whoops, something went wrong: {error.message}</p>}
-          {isLoading && <Loader/>} */}
+          {error && <p>Whoops, something went wrong: {setError}</p>}
+          
           
         </div> 
       );
-    }
-  }
+    
+  };
