@@ -19,7 +19,7 @@ import {animateScroll} from 'react-scroll'
   const [showModal, setShowModal] = useState(false);
   const [loadMore, setLoadMore] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('largeImageURL');
-  const [id, setId] = useState(null);
+  // const [id, setId] = useState(null);
   const per_page = 12;
  
   useEffect(() => {
@@ -40,7 +40,6 @@ import {animateScroll} from 'react-scroll'
          }
           setImages(prevImages => [...prevImages, ...hits]);
           setLoadMore(page < Math.ceil(totalHits / per_page));
-        
       } catch (error) {
         setError({ error });
       } finally {
@@ -79,8 +78,7 @@ import {animateScroll} from 'react-scroll'
     };
   
    
-      // const { images, isLoading, loadMore, showModal, page, largeImageURL } = this.state;
-        
+              
       return (
         <div>
           <Searchbar onSubmit={onFormSubmit}/>

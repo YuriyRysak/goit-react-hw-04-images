@@ -1,7 +1,7 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
 import './Searchbar.css';
-// import { toast } from 'react-toastify';
+
 
 
 
@@ -13,7 +13,6 @@ export const Searchbar = ({onSubmit}) => {
 
     const handleImageChange = event => {
         setSearchImg(event.currentTarget.value.toLowerCase());
-        // console.log(event.currentTarget.value)
     };
 
     const handleSubmit = event => {
@@ -25,10 +24,6 @@ export const Searchbar = ({onSubmit}) => {
         onSubmit(searchImg);
         setSearchImg('');
     };
-
-    // const reset = () => {
-    //     searchImg('');
-    // };
     
         return(
             <header className="Searchbar">
