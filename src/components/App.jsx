@@ -23,10 +23,7 @@ import {animateScroll} from 'react-scroll'
   const per_page = 12;
  
   useEffect(() => {
-    getImages(searchImg, page);
-  }, [searchImg, page]);
 
- 
     const getImages = async (searchImg, page) => {
       if (!searchImg) {
         return;
@@ -46,6 +43,12 @@ import {animateScroll} from 'react-scroll'
         setIsLoading(false);
       }
     };
+
+    getImages(searchImg, page);
+  }, [searchImg, page]);
+
+ 
+ 
     const onFormSubmit = searchImg => {
         setSearchImg(searchImg);
         setImages([]);
@@ -54,7 +57,6 @@ import {animateScroll} from 'react-scroll'
     };
 
    const onloadMore = () => {
-      setIsLoading(true);
       setPage(prevPage =>  prevPage + 1);
       scrollOnMoreButton();
     };
